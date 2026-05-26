@@ -27,8 +27,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.router(notes_router)
-app.router(users_router)
+app.include_router(notes_router)
+app.include_router(users_router)
 
 @app.get("/")
 def root():
