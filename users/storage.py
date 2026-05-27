@@ -31,3 +31,6 @@ def create_user(
 
     db.refresh(new_user)
     return new_user
+
+def get_current_user() -> User:
+    ...
