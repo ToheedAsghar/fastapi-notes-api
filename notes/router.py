@@ -12,8 +12,11 @@ from notes.schemas import NoteCreate, NoteResponse, NoteUpdate
 router = APIRouter(prefix="/notes", tags=["notes"])
 
 @router.get("", response_model=NoteResponse)
-def list_notes_endpoint(notes: Annotated[list[Note], Depends(filter_notes)], user: Annotated[User, Depends(get_current_user)]):
-    return notes
+def list_notes_endpoint(
+    notes: Annotated[list[Note], Depends(filter_notes)],
+    user: Annotated[User, Depends(get_current_user)]
+):
+    return get_notes(notes, user)
 
 @router.get("/{note_id}", response_model=NoteResponse)
 def get_note_endpoint(
@@ -22,7 +25,7 @@ def get_note_endpoint(
 ):
     return note
 
-@router.post("", response_model=NoteResponse)
+@router.post("", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
 def create_note_endpoint(
     note: NoteCreate,
     db: Annotated[Session, Depends(get_db)],
@@ -42,7 +45,7 @@ def update_note_endpoint(
 @router.delete("/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_note_endpoint(
     user: Annotated[User, Depends(get_current_user)],
-    note: Annotated[Note, get_note_or_404],
+    note: Annotated[Note, Depends(get_note_or_404)],
     db: Annotated[Session, Depends(get_db)]
 ):
     return delete_note(note, db)
@@ -50,7 +53,7 @@ def delete_note_endpoint(
 @router.patch("/{note_id}", response_model=NoteUpdate)
 def toggle_archieve(
     user: Annotated[User, Depends(get_current_user)],
-    note: Annotated[Note, get_note_or_404],
+    note: Annotated[Note, Depends(get_note_or_404)],
     db: Annotated[Session, Depends(get_db)]
 ):
     return toggle_archive(note, db)

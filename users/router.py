@@ -29,7 +29,7 @@ def login(
 ) -> Token:
     user = get_user_by_email(form_data.username, db)
 
-    if user is None or verify_password(form_data.password, str(user.password_hash)):
+    if user is None or not verify_password(form_data.password, str(user.password_hash)):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password"

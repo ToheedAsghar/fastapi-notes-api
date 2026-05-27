@@ -9,7 +9,7 @@ class Note(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String(200), nullable=False)
     content = Column(String(10000), nullable=False)
-    is_arhived = Column(Boolean, default=False)
+    is_archived = Column(Boolean, default=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     owner = relationship("User")

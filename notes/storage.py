@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from users.models import User
 from notes.models import Note
-from notes.schemas import NoteCreate, NoteResponse, NoteUpdate
+from notes.schemas import NoteCreate
 
 def get_note_or_404(
         note_id: int,
@@ -22,7 +22,10 @@ def create_note(
         current_user: User,
         db: Session,
 ) -> Note:
-    new_note = Note(**note_data.model_dump(), owner_id = current_user.id)
+    new_note = Note(
+        **note_data.model_dump(),
+        owner_id = current_user.id
+    )
     db.add(new_note)
     db.commit()
     db.refresh(new_note)
@@ -51,13 +54,13 @@ def toggle_archive(
         note: Note,
         db: Session,
 ) -> Note:
-    note.is_arhived = not bool(note.is_arhived)
+    note.is_archived = not bool(note.is_archived)
     db.commit()
     db.refresh(note)
     return note
 
 def filter_notes(
-        db: Session,
+        db: Annotated[Session, Depends(get_db)],
         title: str = Query(default=""),
         skip: int = Query(default=0, ge=0),
         limit: int = Query(default=10, ge=1, le=20)
