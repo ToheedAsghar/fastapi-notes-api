@@ -3,7 +3,6 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, engine
-from notes.storage import get_no_of_notes
 from users.models import User # noqa: F401 — needed so Base sees the User model 
 from notes.models import Note # noqa: F401 — needed so Base sees the Note model
 from notes.router import router as notes_router

@@ -1,13 +1,30 @@
+# Virtual environment
 .venv/
+venv/
+env/
+
+# Python
 __pycache__/
 *.py[cod]
-.pytest_cache/
-.mypy_cache/
-.venv/
-env/
-ENV/
+*$py.class
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment variables
 .env
-.DS_Store
+
+# IDE
 .vscode/
 .idea/
-app.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / coverage artifacts (for Phase 4)
+.pytest_cache/
+.coverage
+htmlcov/
