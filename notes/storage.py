@@ -79,4 +79,4 @@ def filter_notes(
     if archived is not None:
         query = query.filter(Note.is_archived == archived)
     
-    return query.offset(skip).limit(limit).all()
+    return query.offset(skip).limit(limit).al
