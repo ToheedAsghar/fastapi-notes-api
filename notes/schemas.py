@@ -6,15 +6,7 @@ class NoteCreate(BaseModel):
     is_archived: bool = Field(default=False)
 
 class NoteResponse(BaseModel):
-    id: int = Field(default=-1)
-    title: str = Field(min_length=1, max_length=200)
-    content: str = Field(min_length=1, max_length=10000)
-    is_archived: bool = Field(default=False)
-
-    model_config = {"from_attributes": True}
-
-class NoteUpdate(BaseModel):
-    id: int = Field(default=-1)
+    id: int
     title: str = Field(min_length=1, max_length=200)
     content: str = Field(min_length=1, max_length=10000)
     is_archived: bool = Field(default=False)

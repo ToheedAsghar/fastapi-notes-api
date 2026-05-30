@@ -9,12 +9,6 @@ from notes.models import Note # noqa: F401 — needed so Base sees the Note mode
 from notes.router import router as notes_router
 from users.router import router as users_router
 
-# -- for health check -- #
-from database import get_db
-from fastapi import Depends
-from typing import Annotated
-from sqlalchemy.orm import Session
-
 Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Notes API")
 
@@ -23,7 +17,7 @@ async def add_process_time_header(request: Request, call_next):
     start = time.perf_counter()
     response = await call_next(request)
     duration = time.perf_counter() - start
-    response.headers["X-Process_Time"] = f"{duration:.4f}"
+    response.headers["X-Process-Time"] = f"{duration:.4f}"
     return response
 
 app.add_middleware(
@@ -42,5 +36,5 @@ def root():
     return {"message": "Notes API"}
 
 @app.get("/health")
-def get_health(db: Annotated[Session, Depends(get_db)]):
-    return {"status": "ok", "count": get_no_of_notes(db)}
+def get_health():
+    return {"status": "ok"}

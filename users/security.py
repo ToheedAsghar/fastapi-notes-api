@@ -8,7 +8,6 @@ from fastapi import Depends, HTTPException, status
 
 from database import get_db
 from users.models import User
-from notes.models import Note
 
 SECRET_KEY = "dev-secret-do-not-use-in-production"
 ALGORITHM = "HS256"
