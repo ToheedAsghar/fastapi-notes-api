@@ -1,9 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
+from config import settings
+
 # 1. connection url
 # Format: "<dialect>:///<path>"
-SQLALCHEMY_DATABASE_URL = "sqlite:///./app.db"
+SQLALCHEMY_DATABASE_URL = settings.database_url
 
 # 2. The engine - connection pool
 engine = create_engine(

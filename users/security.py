@@ -6,12 +6,9 @@ from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 
+from config import settings
 from database import get_db
 from users.models import User
-
-SECRET_KEY = "dev-secret-do-not-use-in-production"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
@@ -26,7 +23,7 @@ def get_current_user(
     )
     try:
         payload = jwt.decode(
-            token, SECRET_KEY, algorithms=[ALGORITHM]
+            token, settings.secret_key, algorithms=[settings.algorithm]
         )
         user_id_str : str | None = payload.get("sub")
 
@@ -55,11 +52,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(
         user_id: int
 ) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.access_token_expire_minutes)
 
     payload = {
         "sub": str(user_id),
         "exp": expire
     }
 
-    return jwt.encode(payload, SECRET_KEY, ALGORITHM)
+    return jwt.encode(payload, settings.secret_key, settings.algorithm)
