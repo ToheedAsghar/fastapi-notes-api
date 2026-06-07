@@ -71,3 +71,73 @@ def test_unauthenticated_request_rejected(client):
     response = client.get("/notes")
 
     assert response.status_code == 401
+
+def test_update_note_successful(client):
+    headers = register_and_login(client, "alice@example.com")
+    create_resp = client.post("/notes", json={
+        "title": "My Note",
+        "content": "Hello"
+    }, headers=headers)
+    assert create_resp.status_code == 201
+    notes_id = create_resp.json()["id"]
+
+    update_note_response = client.put(f"/notes/{notes_id}", json={
+        "title": "My Updated Note",
+        "content": "Hello"
+    }, headers=headers)
+
+    assert update_note_response.status_code == 200
+    data = update_note_response.json()
+
+    assert data["title"] == "My Updated Note"
+
+def test_delete_note_successful(client):
+    headers = register_and_login(client, "alice@example.com")
+    response = client.post("/notes", json={
+        "title": "My Note",
+        "content": "Hello"
+    }, headers=headers)
+    assert response.status_code == 201
+    notes_id = response.json()["id"]
+
+    delete_response = client.delete(f"/notes/{notes_id}", headers=headers)
+    assert delete_response.status_code == 204
+
+    get_response = client.get(f"/notes/{notes_id}", headers=headers) 
+    assert get_response.status_code == 404
+
+def test_archive_toggle(client):
+    headers = register_and_login(client, "alice@example.com")
+    create_resp = client.post("/notes", json={
+        "title": "My Note",
+        "content": "Hello"
+    }, headers=headers)
+    assert create_resp.status_code == 201
+    notes_id = create_resp.json()["id"]
+
+    response = client.patch(f"/notes/{notes_id}", headers=headers)
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["is_archived"] == True
+
+def test_cannot_toggle_other_users_note(client):
+    alice = register_and_login(client, "alice@example.com")
+
+    create_resp = client.post("/notes", json={
+        "title": "My Note",
+        "content": "Secret"
+    }, headers=alice)
+
+    alice_note_id = create_resp.json()["id"]
+
+    bob = register_and_login(client, "bob@example.com")
+
+    # Bob trying to toggle archieve of Alice
+    response = client.patch(
+        f"/notes/{alice_note_id}",
+        headers=bob
+    )
+
+    assert response.status_code == 404
