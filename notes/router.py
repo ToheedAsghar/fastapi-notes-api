@@ -1,5 +1,5 @@
 from typing import Annotated
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from fastapi import APIRouter, Depends, status
 
 from database import get_db
@@ -10,6 +10,14 @@ from notes.schemas import NoteCreate, NoteResponse
 from notes.storage import filter_notes, get_note_or_404, toggle_archive, delete_note, update_note, create_note
 
 router = APIRouter(prefix="/notes", tags=["notes"])
+
+@router.get("/debug/with-owners")
+def notes_with_owners(db: Annotated[Session, Depends(get_db)]):
+    notes = db.query(Note).options(joinedload(Note.owner)).all()
+    return [{
+        "title": note.title,
+        "ownser": note.owner.id
+    } for note in notes]
 
 @router.get("", response_model=list[NoteResponse])
 def list_notes_endpoint(

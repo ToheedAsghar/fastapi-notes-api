@@ -10,7 +10,8 @@ SQLALCHEMY_DATABASE_URL = settings.database_url
 # 2. The engine - connection pool
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False}
+    connect_args={"check_same_thread": False},
+    echo=True
 )
 
 # 3. sessionLocal - a factory for creating sessions
